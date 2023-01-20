@@ -59,7 +59,7 @@ fun Profile() {
                 }
             }
             ProfileTopBar()
-            RecommendationsGrid()
+            ShoppingGrid()
         }
     }
 }
@@ -294,7 +294,7 @@ fun ProfileTopBar(
 }
 
 @Composable
-fun RecommendationsCard(
+fun ShoppingCard(
     modifier: Modifier = Modifier
 ) {
     val stories by StoriesRepository.observeStories()
@@ -302,6 +302,7 @@ fun RecommendationsCard(
     Card(
         elevation = 12.dp,
         shape = RoundedCornerShape(12.dp),
+
         modifier = modifier
     ) {
         Column(
@@ -324,15 +325,14 @@ fun RecommendationsCard(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun RecommendationsGrid(modifier: Modifier = Modifier) {
+fun ShoppingGrid(modifier: Modifier = Modifier) {
     LazyVerticalGrid(
         cells = GridCells.Fixed(2),
         contentPadding = PaddingValues(horizontal = 16.dp),
-
         modifier = modifier
     ) {
         items(10) {
-            RecommendationsCard(modifier = Modifier.padding(16.dp))
+            ShoppingCard(modifier = Modifier.padding(16.dp))
         }
     }
 }
