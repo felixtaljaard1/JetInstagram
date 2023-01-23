@@ -12,8 +12,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
@@ -26,6 +24,8 @@ import com.vipulasri.jetinstagram.R
 import com.vipulasri.jetinstagram.data.PostsRepository
 import com.vipulasri.jetinstagram.data.StoriesRepository
 import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme.colors
+import androidx.compose.runtime.*
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -34,7 +34,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
+import com.vipulasri.jetinstagram.data.PostsRepository.posts
+import com.vipulasri.jetinstagram.model.Post
 import com.vipulasri.jetinstagram.ui.components.*
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -202,28 +205,52 @@ fun ProfileImage(imageUrl: String) {
 
 @Composable
 fun ProfileButtons() {
+    var index by remember {
+        mutableStateOf(0)
+    }
+    val highlighted = ButtonDefaults.buttonColors(backgroundColor = Color.Blue)
+    val unhighlited = ButtonDefaults.buttonColors(backgroundColor = Color.White)
+    val highlightedText = Color.White
+    val unhighlitedText = Color.Black
     Column() {
         Row(
             modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 8.dp)
         ) {
             Button(
                 modifier = Modifier.width(180.dp),
-                onClick = { /*TODO*/ },
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Blue),
+                onClick = { index = 0 },
+                colors = if (index==0){
+                    highlighted
+                }else{
+                    unhighlited
+                },
             ) {
                 Text(
                     text = "Follow",
-                    color = Color.White
+                    color = if (index==0){
+                        highlightedText
+                    }else{
+                    unhighlitedText
+                },
                 )
             }
             Spacer(modifier = Modifier.size(16.dp))
             Button(
                 modifier = Modifier.width(180.dp),
-                onClick = { /*TODO*/ },
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
+                onClick = { index = 1 },
+                colors = if (index==1){
+                    highlighted
+                }else{
+                    unhighlited
+                },
             ) {
                 Text(
                     text = "Message",
+                    color = if (index==1) {
+                        highlightedText
+                    } else {
+                        unhighlitedText
+                    },
                 )
             }
         }
@@ -232,21 +259,39 @@ fun ProfileButtons() {
         ) {
             Button(
                 modifier = Modifier.width(180.dp),
-                onClick = { /*TODO*/ },
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
+                onClick = { index = 2},
+                colors = if (index==2){
+                    highlighted
+                }else{
+                    unhighlited
+                },
             ) {
                 Text(
                     text = "Email",
+                    color = if (index==2){
+                        highlightedText
+                    }else{
+                        unhighlitedText
+                    },
                 )
             }
             Spacer(modifier = Modifier.size(16.dp))
             Button(
                 modifier = Modifier.width(180.dp),
-                onClick = { /*TODO*/ },
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
+                onClick = { index = 3 },
+                colors = if (index==3){
+                    highlighted
+                }else{
+                    unhighlited
+                },
             ) {
                 Text(
                     text = "Browse",
+                    color = if (index==3){
+                        highlightedText
+                    }else{
+                        unhighlitedText
+                    },
                 )
             }
         }
@@ -255,10 +300,10 @@ fun ProfileButtons() {
 
 @Composable
 fun ProfileTopBar(
-    ) {
+) {
     Row(
         modifier = Modifier.fillMaxWidth()
-    ){
+    ) {
         Button(
             onClick = { /*TODO*/ },
             modifier = Modifier.padding(8.dp),
@@ -266,25 +311,29 @@ fun ProfileTopBar(
         ) {
             Text(text = "Grid")
         }
-        Button(onClick = { /*TODO*/ },
+        Button(
+            onClick = { /*TODO*/ },
             modifier = Modifier.padding(8.dp),
             colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
-            ) {
+        ) {
             Text(text = "List")
         }
-        Button(onClick = { /*TODO*/ },
+        Button(
+            onClick = { /*TODO*/ },
             modifier = Modifier.padding(8.dp),
             colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
         ) {
             Text(text = "IGTV")
         }
-        Button(onClick = { /*TODO*/ },
+        Button(
+            onClick = { /*TODO*/ },
             modifier = Modifier.padding(7.dp),
             colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
         ) {
             Text(text = "Shop")
         }
-        Button(onClick = { /*TODO*/ },
+        Button(
+            onClick = { /*TODO*/ },
             modifier = Modifier.padding(7.dp),
             colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
         ) {
@@ -295,27 +344,26 @@ fun ProfileTopBar(
 
 @Composable
 fun ShoppingCard(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    imageUrl: String,
+    textShopping: String
 ) {
-    val stories by StoriesRepository.observeStories()
-
     Card(
         elevation = 12.dp,
         shape = RoundedCornerShape(12.dp),
-
         modifier = modifier
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Image(
-                painter = painterResource( id = R.drawable.ic_dm),
+                painter = rememberImagePainter(imageUrl),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.height(100.dp)
             )
             Text(
-                text = ("Hello World"),
+                text = (textShopping),
                 style = MaterialTheme.typography.h3.copy(fontSize = 12.sp),
                 modifier = Modifier.padding(8.dp)
             )
@@ -328,11 +376,16 @@ fun ShoppingCard(
 fun ShoppingGrid(modifier: Modifier = Modifier) {
     LazyVerticalGrid(
         cells = GridCells.Fixed(2),
-        contentPadding = PaddingValues(horizontal = 16.dp),
         modifier = modifier
     ) {
         items(10) {
-            ShoppingCard(modifier = Modifier.padding(16.dp))
+            (0..9).forEach { index ->
+                ShoppingCard(
+                    modifier = Modifier.padding(8.dp),
+                    imageUrl = posts.value[index].image,
+                    textShopping = PostsRepository.posts.value[index].user.name
+                )
+            }
         }
     }
 }
